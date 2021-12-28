@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7008801530832345563}
   m_Layer: 0
   m_Name: acorn
-  m_TagString: Item
+  m_TagString: HarmfulItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

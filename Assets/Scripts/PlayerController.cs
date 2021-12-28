@@ -10,7 +10,8 @@ namespace Lesson1   // Quan trong.
     public class PlayerController : MonoBehaviour
     {
         [SerializeField]
-        private TextMeshProUGUI _txtScore;
+        private CanvasGameplay _canvasGamePlay;
+
         [SerializeField]
         private float _speed;
         [SerializeField]
@@ -21,6 +22,8 @@ namespace Lesson1   // Quan trong.
         private Rigidbody2D _rigid;
         [SerializeField]
         private int _score;
+        [SerializeField]
+        private int _health;
 
         private int _isLeft;
 
@@ -30,8 +33,24 @@ namespace Lesson1   // Quan trong.
             private set
             {
                 _score = value;
-                _txtScore.SetText($"Score: {Score}");
-                Debug.Log($"Score: {Score}");
+                _canvasGamePlay.UpdateScore(_score);
+                //Debug.Log($"Score: {Score}");
+            }
+        }
+
+        public int Health
+        {
+            get => _health;
+            private set
+            {
+                _health = value;
+                if (_health <= 0)
+                {
+                    _health = 0;
+                    _canvasGamePlay.ShowGameOver();
+                    Time.timeScale = 0f;
+                }
+                _canvasGamePlay.UpdateHealth(_health);
             }
         }
 
@@ -41,6 +60,8 @@ namespace Lesson1   // Quan trong.
             Debug.Log("Awake()");
             _isLeft = Animator.StringToHash("isLeft");
             Score = 0;
+            Health = 3;
+            Time.timeScale = 1f;
         }
 
         // This function is called when the object becomes enabled and active
@@ -112,15 +133,20 @@ namespace Lesson1   // Quan trong.
                 Destroy(collider.gameObject);
                 Score++;
             }
+            else if (collider.CompareTag("HarmfulItem"))
+            {
+                Debug.Log($"Harmful item!");
+                Health--;
+                Destroy(collider.gameObject);
+            }
         }
 
-        //// OnCollisionEnter2D is called when this collider2D/rigidbody2D has begun touching another rigidbody2D/collider2D (2D physics only)
-        //private void OnCollisionEnter2D(Collision2D collision) {
+        // OnCollisionEnter2D is called when this collider2D/rigidbody2D has begun touching another rigidbody2D/collider2D (2D physics only)
+        //private void OnCollisionEnter2D(Collision2D collision)
+        //{
         //    Debug.Log($"Collide with: {collision.collider.name}");
         //    // Chỉ chạy vào đây khi và chỉ khi isTrigger của collider = true.
         //}
-
-
 
         private void OnDisable()
         {
@@ -130,6 +156,18 @@ namespace Lesson1   // Quan trong.
         private void OnDestroy()
         {
             Debug.Log("OnDestroy()");
+        }
+
+        [ContextMenu("Test_GameOver")]
+        private void Test_GameOver()
+        {
+            Health -= Health;
+        }
+
+        [ContextMenu("Test_Win")]
+        private void Test_Win()
+        {
+            Debug.Log("Win!!!");
         }
     }
 }

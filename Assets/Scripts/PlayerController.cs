@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 // Cho phep ban keo tha vao trong object unity
@@ -8,6 +9,8 @@ namespace Lesson1   // Quan trong.
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField]
+        private TextMeshProUGUI _txtScore;
         [SerializeField]
         private float _speed;
         [SerializeField]
@@ -21,12 +24,23 @@ namespace Lesson1   // Quan trong.
 
         private int _isLeft;
 
+        public int Score 
+        { 
+            get => _score;
+            private set
+            {
+                _score = value;
+                _txtScore.SetText($"Score: {Score}");
+                Debug.Log($"Score: {Score}");
+            }
+        }
+
         // Awake is called when the script instance is being loaded
         private void Awake()
         {
             Debug.Log("Awake()");
             _isLeft = Animator.StringToHash("isLeft");
-            _score = 0;
+            Score = 0;
         }
 
         // This function is called when the object becomes enabled and active
@@ -46,21 +60,45 @@ namespace Lesson1   // Quan trong.
         void Update()
         {
             //Debug.Log("Update()");
+
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                //Debug.Log("Pressed right arrow key!");
-                //transform.position += Vector3.right * _speed * Time.deltaTime;
-                transform.Translate(Vector2.right * _speed * Time.deltaTime);
-                //_spriteRender.flipX = false;
-                _anim.SetBool(_isLeft, false);
+                MoveRight();
             }
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
-                //Debug.Log("Pressed left arrow key!");
-                transform.position += Vector3.left * _speed * Time.deltaTime;
-                //_spriteRender.flipX = true;
-                _anim.SetBool("isLeft", true);
+                MoveLeft();
             }
+
+            // Cach 2: Theo huong di chuyen con chuot.
+            //var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //float directionLength = mousePos.x - transform.position.x;
+            //bool isRightMouse = directionLength > 0f;
+            //if (isRightMouse)
+            //{
+            //    MoveRight();
+            //}
+            //else
+            //{
+            //    MoveLeft();
+            //}
+        }
+
+        private void MoveLeft()
+        {
+            //Debug.Log("Pressed left arrow key!");
+            transform.position += Vector3.left * _speed * Time.deltaTime;
+            //_spriteRender.flipX = true;
+            _anim.SetBool("isLeft", true);
+        }
+
+        private void MoveRight()
+        {
+            //Debug.Log("Pressed right arrow key!");
+            //transform.position += Vector3.right * _speed * Time.deltaTime;
+            transform.Translate(Vector2.right * _speed * Time.deltaTime);
+            //_spriteRender.flipX = false;
+            _anim.SetBool(_isLeft, false);
         }
 
         // OnTriggerEnter2D is called when the Collider2D other enters the trigger (2D physics only)
@@ -72,8 +110,7 @@ namespace Lesson1   // Quan trong.
             {
                 Debug.Log($"Collect!");
                 Destroy(collider.gameObject);
-                _score++;
-                Debug.Log($"Score: {_score}");
+                Score++;
             }
         }
 

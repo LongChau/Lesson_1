@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +12,12 @@ namespace Lesson1
         [SerializeField]
         private bool _isRepeating;
 
+        [SerializeField]
+        private PlayerController _player;
+
         private float _nextSpawnTime = 0f;
+
+        private Coroutine _instantiateItemsCoroutine;
 
         // Start is called before the first frame update
         void Start()
@@ -34,7 +39,19 @@ namespace Lesson1
             //InvokeRepeating("InstantiateItems", 0f, 1f);
 
             // Cach 3: Su dung kem while voi waitforsecond = 1.
-            StartCoroutine(IEInstantiateInfiniteItems());
+            _instantiateItemsCoroutine = StartCoroutine(IEInstantiateInfiniteItems());
+
+            // Listen event OnPlayerDead của player.
+            _player.OnPlayerDead.AddListener(Handle_OnPlayerDead);
+        }
+
+        private void Handle_OnPlayerDead()
+        {
+            Debug.Log("Handle_OnPlayerDead");
+            // Cách xài stop couroutine bậy bạ!!!!
+            //StopCoroutine(IEInstantiateInfiniteItems());
+            // Cách xài StopCoroutine đúng. 
+            StopCoroutine(_instantiateItemsCoroutine);
         }
 
         //IEnumerator IEInstantiateItems(int itemIndex)
@@ -51,7 +68,11 @@ namespace Lesson1
             var wait = new WaitForSecondsRealtime(waitTime);
             while (_isRepeating)
             {
-                // Sau moi 1 giay th� m�nh kh�ng sinh ra th�m WaitForSecondsRealtime.
+                // Cach 1: Check player isDead thì yield break.
+                //if (_player.IsDead)
+                //    yield break;
+
+                // Sau moi 1 giay thì mình không sinh ra thêm WaitForSecondsRealtime.
                 yield return wait;
                 int itemIndex = Random.Range(0, _items.Length);
                 Instantiate(_items[itemIndex], transform.position, transform.rotation);
@@ -74,6 +95,11 @@ namespace Lesson1
             //    _nextSpawnTime = 0f;
             //    InstantiateItems();
             //}
+        }
+
+        private void OnDestroy()
+        {
+            _player?.OnPlayerDead.RemoveListener(Handle_OnPlayerDead);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 // Cho phep ban keo tha vao trong object unity
 // Mac dinh ke thua MonoBehaviour de viet behaviour cho object.
@@ -49,12 +51,35 @@ namespace Lesson1   // Quan trong.
                     _health = 0;
                     _canvasGamePlay.ShowGameOver();
                     Time.timeScale = 0f;
+                    //if (OnPlayerDead != null)
+                    //    OnPlayerDead.Invoke();
+                    OnPlayerDead?.Invoke(); // Y chang cái trên. Nhưng '?' là viết tắt cho cái check null.
                 }
                 _canvasGamePlay.UpdateHealth(_health);
             }
         }
 
-        // Awake is called when the script instance is being loaded
+        public bool IsDead => Health == 0;
+
+        // Tương đương cái IsDead phía trên.
+        //public bool IsDead
+        //{
+        //    //get => Health == 0;
+        //    //get
+        //    //{
+        //    //    return Health == 0;
+        //    //}
+
+        //    get
+        //    {
+        //        bool isDead = Health == 0;
+        //        return isDead;
+        //    }
+        //}
+
+        public UnityEvent OnPlayerDead;
+
+        // Awake is called when the script instance is being loaded\
         private void Awake()
         {
             Debug.Log("Awake()");

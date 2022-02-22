@@ -27,6 +27,13 @@ namespace Lesson1   // Quan trong.
         [SerializeField]
         private int _health;
 
+        [SerializeField]
+        private AudioClip _takeDamgClip;
+        [SerializeField]
+        private AudioClip _takeFruitClip;
+        [SerializeField]
+        private AudioSource _audioSource;
+
         private int _isLeft;
 
         public int Score 
@@ -155,12 +162,14 @@ namespace Lesson1   // Quan trong.
             //if (collider.tag == "Item")   // Không nên xài. Sinh ra cái "string" mới.
             {
                 Debug.Log($"Collect!");
+                _audioSource.PlayOneShot(_takeFruitClip);
                 Destroy(collider.gameObject);
                 Score++;
             }
             else if (collider.CompareTag("HarmfulItem"))
             {
                 Debug.Log($"Harmful item!");
+                _audioSource.PlayOneShot(_takeDamgClip);
                 Health--;
                 Destroy(collider.gameObject);
             }
